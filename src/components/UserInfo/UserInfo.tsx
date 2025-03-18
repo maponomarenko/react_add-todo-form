@@ -1,6 +1,10 @@
-import { User } from '../../App';
+import { FC } from 'react';
 
-export const UserInfo = (user: User) => {
+interface UserInfoInt {
+  user: { id: number; name: string; username: string; email: string };
+}
+
+export const UserInfo: FC<UserInfoInt> = ({ user }) => {
   return (
     <a className="UserInfo" href={`mailto:${user.email}`}>
       {user.name}

@@ -4,21 +4,21 @@ import { UserInfo } from '../UserInfo';
 import { FC } from 'react';
 
 interface Prop {
-  item: ToDoItem;
+  todo: ToDoItem;
   user: User | undefined;
 }
 
-export const TodoInfo: FC<Prop> = ({ item, user }) => {
+export const TodoInfo: FC<Prop> = ({ todo, user }) => {
   return (
     <article
-      data-id={item.id}
+      data-id={todo.id}
       className={cn('TodoInfo', {
-        'TodoInfo--completed': item.completed,
+        'TodoInfo--completed': todo.completed,
       })}
     >
-      <h2 className="TodoInfo__title">{item.title}</h2>
+      <h2 className="TodoInfo__title">{todo.title}</h2>
 
-      {user && <UserInfo {...user} />}
+      <UserInfo user={user} />
     </article>
   );
 };
