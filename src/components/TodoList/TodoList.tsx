@@ -2,9 +2,9 @@ import { FC } from 'react';
 import { ToDoItem, User } from '../../App';
 import { TodoInfo } from '../TodoInfo';
 
-interface Item {
-  item: ToDoItem;
-  user: User | undefined;
+export interface Item {
+  toDoItem: ToDoItem;
+  user: User;
 }
 
 interface Props {
@@ -14,8 +14,8 @@ interface Props {
 export const TodoList: FC<Props> = ({ todos }) => {
   return (
     <section className="TodoList">
-      {todos.map((item: Item) => (
-        <TodoInfo todo={item.item} user={item.user} key={item.item.id} />
+      {todos.map(item => (
+        <TodoInfo todo={item} key={item.toDoItem.id} />
       ))}
     </section>
   );

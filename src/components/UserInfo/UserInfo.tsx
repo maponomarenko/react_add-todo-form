@@ -1,7 +1,8 @@
 import { FC } from 'react';
+import { User } from '../../App';
 
 interface UserInfoInt {
-  user: { id: number; name: string; username: string; email: string };
+  user: User;
 }
 
 export const UserInfo: FC<UserInfoInt> = ({ user }) => {

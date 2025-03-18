@@ -1,24 +1,18 @@
 import cn from 'classnames';
-import { ToDoItem, User } from '../../App';
 import { UserInfo } from '../UserInfo';
 import { FC } from 'react';
+import { Item } from '../TodoList/TodoList';
 
-interface Prop {
-  todo: ToDoItem;
-  user: User | undefined;
-}
-
-export const TodoInfo: FC<Prop> = ({ todo, user }) => {
+export const TodoInfo: FC<{ todo: Item }> = ({ todo }) => {
   return (
     <article
-      data-id={todo.id}
+      data-id={todo.toDoItem.id}
       className={cn('TodoInfo', {
-        'TodoInfo--completed': todo.completed,
+        'TodoInfo--completed': todo.toDoItem.completed,
       })}
     >
-      <h2 className="TodoInfo__title">{todo.title}</h2>
-
-      <UserInfo user={user} />
+      <h2 className="TodoInfo__title">{todo.toDoItem.title}</h2>
+      <UserInfo user={todo.user} />
     </article>
   );
 };

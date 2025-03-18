@@ -5,29 +5,40 @@ import todosFromServer from './api/todos';
 import { TodoList } from './components/TodoList';
 import { ChangeEvent, FormEvent, useState } from 'react';
 
-export type ToDoItem = {
+export interface ToDoItem {
   id: number;
   title: string;
   completed: boolean;
   userId: number;
-};
+}
 
-export type User = {
+export interface User {
   id: number;
   name: string;
   username: string;
   email: string;
+}
+
+interface Prop {
+  toDoItem: ToDoItem;
+  user: User;
+}
+
+const getUser = (id: number) => {
+  return (
+    usersFromServer.find(indUser => indUser.id === id) || {
+      id: 0,
+      name: 'Default name',
+      username: 'Default username',
+      email: 'email@email.com',
+    }
+  );
 };
 
-type Prop = {
-  item: ToDoItem;
-  user: User | undefined;
-};
+const preparedList = todosFromServer.map(toDoItem => {
+  const user = getUser(toDoItem.userId);
 
-const preparedList = todosFromServer.map(item => {
-  const user = usersFromServer.find(indUser => indUser.id === item.userId);
-
-  return { item, user };
+  return { toDoItem, user };
 });
 
 export const App = () => {
@@ -39,8 +50,8 @@ export const App = () => {
   const [titleValue, setTitleValue] = useState('');
   const [titleError, setTitleError] = useState(false);
 
-  const onAdd = (toDoItem: Prop) => {
-    setVisibleList((currentList: Prop[]) => [...currentList, toDoItem]);
+  const onAdd = (newToDoItem: Prop) => {
+    setVisibleList(currentList => [...currentList, newToDoItem]);
   };
 
   const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +73,7 @@ export const App = () => {
   };
 
   const getTodoId = () => {
-    const maxId = Math.max(...visibleList.map(item => item.item.id));
+    const maxId = Math.max(...visibleList.map(item => item.toDoItem.id));
 
     return maxId + 1;
   };
@@ -83,7 +94,7 @@ export const App = () => {
     }
 
     onAdd({
-      item: {
+      toDoItem: {
         id: getTodoId(),
         title: titleValue,
         completed: false,
@@ -91,15 +102,9 @@ export const App = () => {
       },
       user: {
         id: +chosenUser,
-        name:
-          usersFromServer.find(user => user.id === +chosenUser)?.name ||
-          'Default',
-        username:
-          usersFromServer.find(user => user.id === +chosenUser)?.username ||
-          'Default',
-        email:
-          usersFromServer.find(user => user.id === +chosenUser)?.email ||
-          'Default',
+        name: getUser(+chosenUser).name,
+        username: getUser(+chosenUser).username,
+        email: getUser(+chosenUser).email,
       },
     });
 
