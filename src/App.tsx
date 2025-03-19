@@ -4,42 +4,21 @@ import usersFromServer from './api/users';
 import todosFromServer from './api/todos';
 import { TodoList } from './components/TodoList';
 import { ChangeEvent, FormEvent, useState } from 'react';
-
-export interface ToDoItem {
-  id: number;
-  title: string;
-  completed: boolean;
-  userId: number;
-}
-
-export interface User {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-}
-
-interface Prop {
-  toDoItem: ToDoItem;
-  user: User;
-}
+import { TodoWithUser } from './types/Types';
 
 const getUser = (id: number) => {
-  return (
-    usersFromServer.find(indUser => indUser.id === id) || {
-      id: 0,
-      name: 'Default name',
-      username: 'Default username',
-      email: 'email@email.com',
-    }
-  );
+  return usersFromServer.find(indUser => indUser.id === id) || null;
 };
 
-const preparedList = todosFromServer.map(toDoItem => {
+const preparedList = todosFromServer.reduce<TodoWithUser[]>((acc, toDoItem) => {
   const user = getUser(toDoItem.userId);
 
-  return { toDoItem, user };
-});
+  if (user) {
+    acc.push({ ...toDoItem, user });
+  }
+
+  return acc;
+}, []);
 
 export const App = () => {
   const [visibleList, setVisibleList] = useState(preparedList);
@@ -50,7 +29,7 @@ export const App = () => {
   const [titleValue, setTitleValue] = useState('');
   const [titleError, setTitleError] = useState(false);
 
-  const onAdd = (newToDoItem: Prop) => {
+  const onAdd = (newToDoItem: TodoWithUser) => {
     setVisibleList(currentList => [...currentList, newToDoItem]);
   };
 
@@ -73,7 +52,7 @@ export const App = () => {
   };
 
   const getTodoId = () => {
-    const maxId = Math.max(...visibleList.map(item => item.toDoItem.id));
+    const maxId = Math.max(...visibleList.map(item => item.id));
 
     return maxId + 1;
   };
@@ -93,18 +72,23 @@ export const App = () => {
       return;
     }
 
+    const user = getUser(+chosenUser);
+
+    if (!user) {
+      return;
+    }
+
     onAdd({
-      toDoItem: {
-        id: getTodoId(),
-        title: titleValue,
-        completed: false,
-        userId: +chosenUser,
-      },
+      id: getTodoId(),
+      title: titleValue,
+      completed: false,
+      userId: +chosenUser,
+
       user: {
         id: +chosenUser,
-        name: getUser(+chosenUser).name,
-        username: getUser(+chosenUser).username,
-        email: getUser(+chosenUser).email,
+        name: user.name,
+        username: user.username,
+        email: user.email,
       },
     });
 

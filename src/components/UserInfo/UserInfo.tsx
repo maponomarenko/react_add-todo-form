@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { User } from '../../App';
+import { User } from '../../types/Types';
 
 interface UserInfoInt {
   user: User;
